@@ -30,7 +30,7 @@
   class AuthorController {
     /**
      * @swagger
-     * /authors/create-author/:
+     * /authors/:
      *   post:
      *     summary: Create a new author
      *     tags:
@@ -251,7 +251,7 @@
 
     /**
  * @swagger
- * /authors/update-author/{slug}:
+ * /authors/{slug}:
  *   patch:
  *     summary: Update an existing author's information
  *     tags:

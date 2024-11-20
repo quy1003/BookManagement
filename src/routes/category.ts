@@ -8,9 +8,9 @@ const categoryController = require("../controllers/category");
  *   name: Categories
  *   description: Category management
  */
-router.post("/create-category/", categoryController.createCategory);
+router.post("/", categoryController.createCategory);
 router.get("/", categoryController.getCategories);
 
-router.patch("/update-category/:slug/", categoryController.updateCategory)
+router.patch("/:slug/", categoryController.updateCategory)
 router.get("/:slug/", categoryController.getCategorytDetail)
 module.exports = router;

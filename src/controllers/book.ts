@@ -4,15 +4,25 @@ const cloudinary = require("../config/cloudinary").cloudinary;
 const Book = require("../model/Book");
 const Author = require("../model/Author");
 const Category = require("../model/Category");
-
+const {MulterFile} = require('multer')
 //Type Defined
+type AuthorType = {
+  _id: Types.ObjectId,
+  name: string,
+  slug: string
+}
+type CategoryType = {
+  _id: Types.ObjectId,
+  name: string,
+  slug: string
+}
 type BookType = {
   _id: string;
   name: string;
-  categories: string[]; // mảng các ID của category
+  categories: CategoryType[]; // mảng các ID của category
   images: string[]; // mảng các URL của ảnh
   release: string; // định dạng ngày dưới dạng chuỗi ISO
-  authors: string[]; // mảng các ID của author
+  authors: AuthorType[]; // mảng các ID của author
   description: string; // mô tả cuốn sách
   slug: string; // slug của sách
   // cover?: string[]; // nếu có thuộc tính cover trong response
@@ -39,10 +49,41 @@ type ResBookType = {
   message: string,
   book: BookType
 }
+
+//Type for update book
+type MulterFile = {
+  fieldname: string; // Tên trường (ví dụ: 'images' hoặc 'cover')
+  originalname: string; // Tên file ban đầu
+  encoding: string; // Kiểu mã hóa
+  mimetype: string; // Kiểu MIME (ví dụ: 'image/jpeg')
+  size: number; // Kích thước file (byte)
+  path: string; // Đường dẫn tới file (nếu lưu trên Cloudinary, chứa URL)
+  buffer?: Buffer; // Dữ liệu file (nếu dùng bộ nhớ tạm)
+}
+type UpdateBookBody = {
+  name?: string;
+  release?: string; // Hoặc Date nếu bạn xử lý trước
+  description?: string;
+  slug?: string;
+  categories?: string[] | string;
+  authors?: string[] | string;
+  replaceIndexes?: number[] | string;
+}
+type UpdateBookParams = {
+  slug: string;
+}
+type UpdateBookFiles = {
+  images?: MulterFile[]; // File upload từ Multer
+}
+type UpdateBookTypeRequest = Request & {
+  body: UpdateBookBody;
+  params: UpdateBookParams;
+  files?: UpdateBookFiles;
+}
 class BookController {
   /**
    * @swagger
-   * /books/create:
+   * /books/:
    *   post:
    *     summary: Create a new book
    *     description: Create a new book in the database.
@@ -322,7 +363,7 @@ class BookController {
  */
   public async getBooks(req:Request, res:Response){
     try{
-      const books = await Book.find()
+      const books = await Book.find().populate('authors', '_id name').populate('categories','_id name')
       if(books){
         return res.status(200).json({
           message: 'Get books successfully',
@@ -426,7 +467,7 @@ class BookController {
   public async getBookDetail(req:Request<SlugType,{},{},{}>, res: Response<ResBookType|ExceptionType>){
     try{
       const {slug} = req.params
-      const book = await Book.findOne({slug: slug})
+      const book = await Book.findOne({slug: slug}).populate('authors', '_id name').populate('categories','_id name')
       if(book){
         const successResponse : ResBookType = {
           message: 'Get Book Successfully',
@@ -458,8 +499,155 @@ class BookController {
   }
 
 
-  
-  public async updateBook(req: Request, res: Response) {
+/**
+ * @swagger
+ * /books/{slug}:
+ *   patch:
+ *     summary: Update book information
+ *     tags:
+ *       - Books
+ *     description: Update the title, description, categories, authors, and images of a book based on the book's slug.
+ *     parameters:
+ *       - in: path
+ *         name: slug
+ *         required: true
+ *         description: The slug of the book to update.
+ *         schema:
+ *           type: string
+ *           example: "dac-nhan-tam"
+ *       - in: query
+ *         name: replaceIndexes
+ *         required: false
+ *         description: Array of indexes of images that need to be replaced in the book’s image array.
+ *         schema:
+ *           type: array
+ *           items:
+ *             type: integer
+ *           example: [0, 1]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *                 description: The name of the book.
+ *                 example: "The Art of People"
+ *               release:
+ *                 type: string
+ *                 format: date
+ *                 description: The release date of the book.
+ *                 example: "2024-11-20"
+ *               description:
+ *                 type: string
+ *                 description: A description of the book.
+ *                 example: "A book about the art of influencing people and understanding relationships."
+ *               slug:
+ *                 type: string
+ *                 description: The slug of the book, used as the URL.
+ *                 example: "dac-nhan-tam"
+ *               categories:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: The list of categories associated with the book.
+ *                 example: ["fiction", "self-help"]
+ *               authors:
+ *                 type: array
+ *                 items:
+ *                   type: string
+ *                 description: The list of authors of the book.
+ *                 example: ["author-id-1", "author-id-2"]
+ *               replaceIndexes:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *                 description: The indexes of the images that need to be replaced.
+ *                 example: [0, 1]
+ *     responses:
+ *       200:
+ *         description: Book updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Book updated successfully"
+ *                 book:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: "6473b7b74a0e63e0b9d217a3"
+ *                     name:
+ *                       type: string
+ *                       example: "The Art of People"
+ *                     release:
+ *                       type: string
+ *                       format: date
+ *                       example: "2024-11-20"
+ *                     description:
+ *                       type: string
+ *                       example: "A book about the art of influencing people and understanding relationships."
+ *                     slug:
+ *                       type: string
+ *                       example: "dac-nhan-tam"
+ *                     categories:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                       example: ["fiction", "self-help"]
+ *                     authors:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                       example: ["author-id-1", "author-id-2"]
+ *                     images:
+ *                       type: array
+ *                       items:
+ *                         type: string
+ *                         format: uri
+ *                       example: [
+ *                         "https://res.cloudinary.com/example/image/upload/v1234567890/images/example1.jpg",
+ *                         "https://res.cloudinary.com/example/image/upload/v1234567891/images/example2.jpg"
+ *                       ]
+ *       400:
+ *         description: Invalid or missing data.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid input data"
+ *       404:
+ *         description: Book not found or some categories/authors do not exist.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Book not found or some categories/authors do not exist"
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Unknown Error!"
+ */
+
+  public async updateBook(req: UpdateBookTypeRequest, res: ResBookType & Response) {
     try {
       const slug = req.params.slug;
       const updateData = req.body;

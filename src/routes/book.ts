@@ -11,12 +11,12 @@ const {upload} = require('../config/cloudinary')
  *   name: Books
  *   description: Book management
  */
-router.post('/create-book/',
+router.post('/',
     upload,
     bookController.createBook
 )
 router.get('/', bookController.getBooks)
 
-router.patch('/update-book/:slug/',upload, bookController.updateBook)
+router.patch('/:slug/',upload, bookController.updateBook)
 router.get('/:slug/', bookController.getBookDetail)
 module.exports = router;

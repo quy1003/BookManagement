@@ -22,7 +22,7 @@ type ExceptionType = {
 class CategoryController {
   /**
    * @swagger
-   * /categories/create-category/:
+   * /categories/:
    *   post:
    *     summary: Create a new category
    *     tags:
@@ -226,7 +226,7 @@ class CategoryController {
 
 /**
  * @swagger
- * /categories/update-category/{slug}:
+ * /categories/{slug}:
  *   patch:
  *     summary: Update an existing category
  *     description: Update the name of a category based on the provided slug.
