@@ -21,7 +21,7 @@ route(app);
 //
 
 app.get('/', (req:Request, res:Response) => {
-  res.send('Hello World!')
+  res.send('Book Management API')
 })
 
 app.listen(process.env.PORT || 3000, () => {
