@@ -798,14 +798,14 @@ class BookController {
  *                   type: object
  */
 
-  public async deleteBook(req: Request<{ slug: string }>, res: Response<{ message: string } | { message: string; error: any }>) {
+  public async deleteBook(req: Request<{ slug: string }>, res: Response) {
     try {
       const { slug } = req.params;
 
       // Tìm và xóa sách dựa trên slug
       const book = await Book.findOneAndDelete({ slug });
       if (!book) {
-        return res.status(404).json({ message: "Book not found" });
+         res.status(404).json({ message: "Book not found" });
       }
 
       // Xóa thành công
