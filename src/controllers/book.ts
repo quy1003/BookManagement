@@ -467,7 +467,7 @@ class BookController {
   public async getBookDetail(req:Request<SlugType,{},{},{}>, res: Response<ResBookType|ExceptionType>){
     try{
       const {slug} = req.params
-      const book = await Book.findOne({slug: slug}).populate('authors', '_id name').populate('categories','_id name')
+      const book = await Book.findOne({slug: slug}).populate('authors', '_id name avatar').populate('categories','_id name')
       if(book){
         const successResponse : ResBookType = {
           message: 'Get Book Successfully',
