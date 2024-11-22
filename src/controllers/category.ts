@@ -88,13 +88,13 @@ class CategoryController {
       });
 
       await category.save();
-      return res.status(201).json({ message: 'Insert New Category Successfully!', category });
+       res.status(201).json({ message: 'Insert New Category Successfully!', category });
     }
     catch (ex) {
       if (ex instanceof Error) {
-        return res.status(500).json({ message: ex.message });
+         res.status(500).json({ message: ex.message });
       } else {
-        return res.status(500).json({ message: 'Unknown Error!' });
+         res.status(500).json({ message: 'Unknown Error!' });
       }
     }
   }
@@ -127,13 +127,13 @@ class CategoryController {
   public async getCategories(req: Request, res: Response) {
     try {
       const categories = await Category.find({});
-      return res.status(200).json(categories);
+       res.status(200).json(categories);
     }
     catch (ex) {
       if (ex instanceof Error) {
-        return res.status(500).json({ message: ex.message });
+         res.status(500).json({ message: ex.message });
       } else {
-        return res.status(500).json({ message: 'Unknown Error!' });
+         res.status(500).json({ message: 'Unknown Error!' });
       }
     }
   }
@@ -209,17 +209,17 @@ class CategoryController {
             }
             
           }
-          return res.status(200).json(successResponse)
+           res.status(200).json(successResponse)
         }
         else{
-          return res.status(200).json({message: "Nothing to show"})
+           res.status(200).json({message: "Nothing to show"})
         }
       }
       catch(ex){
         if (ex instanceof Error) {
-          return res.status(500).json({ message: ex.message });
+           res.status(500).json({ message: ex.message });
         } else {
-          return res.status(500).json({ message: "Unknown Error!" });
+           res.status(500).json({ message: "Unknown Error!" });
         }
       }
     }
@@ -311,7 +311,7 @@ class CategoryController {
         const category = await Category.findOne({ slug });
   
         if (!category) {
-          return res.status(404).json({ message: "Category not found" });
+           res.status(404).json({ message: "Category not found" });
         }
         if (name) {
           category.name = name;
@@ -325,12 +325,12 @@ class CategoryController {
             slug: category.slug
           }
         }
-        return res.status(200).json(successResponse);
+         res.status(200).json(successResponse);
       } catch (ex) {
         if (ex instanceof Error) {
-          return res.status(500).json({ message: ex.message });
+           res.status(500).json({ message: ex.message });
         } else {
-          return res.status(500).json({ message: "Unknown Error!" });
+           res.status(500).json({ message: "Unknown Error!" });
         }
       }
     }

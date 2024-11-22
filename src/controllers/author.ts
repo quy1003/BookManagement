@@ -60,7 +60,7 @@
       try {
         const { name } = req.body;
         if (!name) {
-          return res
+           res
             .status(403)
             .json({ message: "Please filled out the author name!" });
         }
@@ -72,7 +72,7 @@
               { resource_type: "auto" },
               async (error: any, result: any) => {
                 if (error) {
-                  return res.status(400).json({ message: "Can not upload file" });
+                   res.status(400).json({ message: "Can not upload file" });
                 }
                 avatar = result.secure_url;
 
@@ -83,9 +83,9 @@
                 
                 try {
                   await author.save();
-                  return res.status(201).json({message:'Author created successfully', author});
+                   res.status(201).json({message:'Author created successfully', author});
                 } catch (ex: any) {
-                  return res.status(500).send(ex.message);
+                   res.status(500).send(ex.message);
                 }
               }
             )
@@ -106,15 +106,15 @@
               slug: newAuthor.slug
             }
           }
-          return res
+           res
             .status(201)
             .json(successResponse);
         }
       } catch (ex) {
         if (ex instanceof Error) {
-          return res.status(500).json({ message: ex.message });
+           res.status(500).json({ message: ex.message });
         } else {
-          return res.status(500).json({ message: "Unknown Error!" });
+           res.status(500).json({ message: "Unknown Error!" });
         }
       }
     }
@@ -147,12 +147,12 @@
     public async getAuthors(req: Request, res: Response<ResAuthorsType | ExceptionType>) {
       try {
         const authors = await Author.find({});
-        return res.status(200).json(authors);
+         res.status(200).json(authors);
       } catch (ex) {
         if (ex instanceof Error) {
-          return res.status(500).json({ message: ex.message });
+           res.status(500).json({ message: ex.message });
         } else {
-          return res.status(500).json({ message: "Unknown Error!" });
+           res.status(500).json({ message: "Unknown Error!" });
         }
       }
     }
@@ -234,17 +234,17 @@
             }
             
           }
-          return res.status(200).json(successResponse)
+           res.status(200).json(successResponse)
         }
         else{
-          return res.status(200).json({message: "Nothing to show"})
+           res.status(200).json({message: "Nothing to show"})
         }
       }
       catch(ex){
         if (ex instanceof Error) {
-          return res.status(500).json({ message: ex.message });
+           res.status(500).json({ message: ex.message });
         } else {
-          return res.status(500).json({ message: "Unknown Error!" });
+           res.status(500).json({ message: "Unknown Error!" });
         }
       }
     }
@@ -291,7 +291,7 @@
         const author = await Author.findOne({ slug });
   
         if (!author) {
-          return res.status(404).json({ message: "Author not found" });
+           res.status(404).json({ message: "Author not found" });
         }
         if (name) {
           author.name = name;
@@ -325,12 +325,12 @@
             slug:author.slug
           }
         }
-        return res.status(200).json(successResponse);
+         res.status(200).json(successResponse);
       } catch (ex) {
         if (ex instanceof Error) {
-          return res.status(500).json({ message: ex.message });
+           res.status(500).json({ message: ex.message });
         } else {
-          return res.status(500).json({ message: "Unknown Error!" });
+           res.status(500).json({ message: "Unknown Error!" });
         }
       }
     }

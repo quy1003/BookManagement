@@ -206,7 +206,7 @@ class BookController {
       let { name, categories, release, authors, description } = req.body;
 
       if (!name) {
-        return res.status(400).json({ message: "Lack of information" });
+       res.status(400).json({ message: "Lack of information" });
       }
 
       // const coverUrls: string[] = [];
@@ -365,17 +365,17 @@ class BookController {
     try{
       const books = await Book.find().populate('authors', '_id name').populate('categories','_id name')
       if(books){
-        return res.status(200).json({
+         res.status(200).json({
           message: 'Get books successfully',
           books
         })
       }
       else{
-        return res.status(400).json({message: 'Nothing to show'})
+         res.status(400).json({message: 'Nothing to show'})
       }
     }
     catch(ex){
-      return res.status(500).json({message:'Something wrong'})
+       res.status(500).json({message:'Something wrong'})
     }
   }
   /**
@@ -483,17 +483,17 @@ class BookController {
           }
           
         }
-        return res.status(200).json(successResponse)
+         res.status(200).json(successResponse)
       }
       else{
-        return res.status(200).json({message: "Nothing to show"})
+         res.status(200).json({message: "Nothing to show"})
       }
     }
     catch(ex){
       if (ex instanceof Error) {
-        return res.status(500).json({ message: ex.message });
+         res.status(500).json({ message: ex.message });
       } else {
-        return res.status(500).json({ message: "Unknown Error!" });
+         res.status(500).json({ message: "Unknown Error!" });
       }
     }
   }
@@ -647,7 +647,7 @@ class BookController {
  *                   example: "Unknown Error!"
  */
 
-  public async updateBook(req: UpdateBookTypeRequest, res: ResBookType & Response) {
+  public async updateBook(req: UpdateBookTypeRequest, res: Response<ResBookType|ExceptionType>) {
     try {
       const slug = req.params.slug;
       const updateData = req.body;
@@ -656,7 +656,7 @@ class BookController {
       // Kiểm tra sự tồn tại của Book
       const book = await Book.findOne({slug:slug});
       if (!book) {
-        return res.status(404).json({ message: "Book not found" });
+         res.status(404).json({ message: "Book not found" });
       }
   
       // Cập nhật các trường đơn giản
@@ -675,7 +675,7 @@ class BookController {
           _id: { $in: categories },
         });
         if (validCategories.length !== categories.length) {
-          return res.status(404).json({ message: "Some categories did not exist" });
+           res.status(404).json({ message: "Some categories did not exist" });
         }
         book.categories = categories;
       }
@@ -688,7 +688,7 @@ class BookController {
         }
         const validAuthors = await Author.find({ _id: { $in: authors } });
         if (validAuthors.length !== authors.length) {
-          return res.status(404).json({ message: "Some authors did not exist" });
+           res.status(404).json({ message: "Some authors did not exist" });
         }
         book.authors = authors;
       }
@@ -746,7 +746,8 @@ class BookController {
     }
   }
   
-/**
+
+  /**
  * @swagger
  * /books/{slug}:
  *   delete:
@@ -796,25 +797,24 @@ class BookController {
  *                 error:
  *                   type: object
  */
-public async deleteBook(req: Request<{ slug: string }>, res: Response<{ message: string } | { message: string; error: any }>) {
-  try {
-    const { slug } = req.params;
 
-    // Tìm và xóa sách dựa trên slug
-    const book = await Book.findOneAndDelete({ slug });
-    if (!book) {
-      return res.status(404).json({ message: "Book not found" });
+  public async deleteBook(req: Request<{ slug: string }>, res: Response<{ message: string } | { message: string; error: any }>) {
+    try {
+      const { slug } = req.params;
+
+      // Tìm và xóa sách dựa trên slug
+      const book = await Book.findOneAndDelete({ slug });
+      if (!book) {
+        return res.status(404).json({ message: "Book not found" });
+      }
+
+      // Xóa thành công
+      res.status(200).json({ message: "Book deleted successfully" });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Something went wrong", error });
     }
-
-    // Xóa thành công
-    res.status(200).json({ message: "Book deleted successfully" });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Something went wrong", error });
   }
-}
-
-
 
 }
 

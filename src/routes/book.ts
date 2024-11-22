@@ -2,7 +2,7 @@ const multer = require('multer')
 const storage = multer.memoryStorage();
 import express, { Router } from "express";
 const router: Router = express.Router();
-const bookController = require("../controllers/book").default;
+import bookController from '../controllers/book'
 const {upload} = require('../config/cloudinary')
 
 /**
@@ -16,7 +16,7 @@ router.post('/',
     bookController.createBook
 )
 router.get('/', bookController.getBooks)
-router.delete('/:slug/', bookController.deleteBook)
+
 router.patch('/:slug/',upload, bookController.updateBook)
 router.get('/:slug/', bookController.getBookDetail)
 module.exports = router;

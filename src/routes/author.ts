@@ -1,6 +1,6 @@
 import express, { Router } from "express";
 const router: Router = express.Router();
-const authorController = require("../controllers/author");
+import authorController from '../controllers/author'
 const multer = require('multer');
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
