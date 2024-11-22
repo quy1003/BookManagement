@@ -337,4 +337,4 @@
 
   }
 
-  module.exports = new AuthorController();
+  export default new AuthorController();

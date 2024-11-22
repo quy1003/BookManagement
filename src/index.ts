@@ -27,15 +27,3 @@ app.get('/', (req:Request, res:Response) => {
 app.listen(process.env.PORT || 3000, () => {
   console.log(`Example app listening on port ${port}`)
 })
-
-mongoose.connection.on('connected', () => {
-  console.log('Connected to MongoDB Atlas successfully');
-});
-
-mongoose.connection.on('error', (err:any) => {
-  console.error('Error connecting to MongoDB Atlas:', err);
-});
-
-mongoose.connection.on('disconnected', () => {
-  console.log('Disconnected from MongoDB Atlas');
-});

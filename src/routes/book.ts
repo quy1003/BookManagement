@@ -16,7 +16,7 @@ router.post('/',
     bookController.createBook
 )
 router.get('/', bookController.getBooks)
-
+router.delete('/:slug/', bookController.deleteBook)
 router.patch('/:slug/',upload, bookController.updateBook)
 router.get('/:slug/', bookController.getBookDetail)
 module.exports = router;

@@ -746,6 +746,73 @@ class BookController {
     }
   }
   
+/**
+ * @swagger
+ * /books/{slug}:
+ *   delete:
+ *     summary: Delete a book by its slug
+ *     tags:
+ *       - Books
+ *     description: Remove a book from the database using its slug.
+ *     parameters:
+ *       - in: path
+ *         name: slug
+ *         required: true
+ *         description: The slug of the book to delete
+ *         schema:
+ *           type: string
+ *           example: "dac-nhan-tam"
+ *     responses:
+ *       200:
+ *         description: Successfully deleted the book
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Book deleted successfully"
+ *       404:
+ *         description: Book not found
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Book not found"
+ *       500:
+ *         description: Internal server error
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Something went wrong"
+ *                 error:
+ *                   type: object
+ */
+public async deleteBook(req: Request<{ slug: string }>, res: Response<{ message: string } | { message: string; error: any }>) {
+  try {
+    const { slug } = req.params;
+
+    // Tìm và xóa sách dựa trên slug
+    const book = await Book.findOneAndDelete({ slug });
+    if (!book) {
+      return res.status(404).json({ message: "Book not found" });
+    }
+
+    // Xóa thành công
+    res.status(200).json({ message: "Book deleted successfully" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Something went wrong", error });
+  }
+}
 
 
 
