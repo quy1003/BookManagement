@@ -24,6 +24,11 @@ app.get('/', (req:Request, res:Response) => {
   res.send('Book Management API')
 })
 
-app.listen(process.env.PORT || 3000, () => {
-  console.log(`Example app listening on port ${port}`)
+const server = app.listen(process.env.PORT || 0, () => {
+  const address = server.address();
+  const actualPort = typeof address === 'string' ? address : address?.port;
+  console.log(`Example app listening on port ${actualPort}`);
 })
+
+
+export default app
